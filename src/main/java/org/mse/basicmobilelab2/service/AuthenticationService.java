@@ -7,8 +7,6 @@ import org.mse.basicmobilelab2.entity.RefreshToken;
 import org.mse.basicmobilelab2.entity.User;
 import org.mse.basicmobilelab2.payload.request.LoginRequest;
 import org.mse.basicmobilelab2.payload.response.JwtResponse;
-import org.mse.basicmobilelab2.repository.RoleRepository;
-import org.mse.basicmobilelab2.repository.UserCollectionRepo;
 import org.mse.basicmobilelab2.security.jwt.JwtUtils;
 import org.mse.basicmobilelab2.security.service.RefreshTokenService;
 import org.mse.basicmobilelab2.security.service.UserDetailsImpl;
@@ -17,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,14 +22,13 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     RefreshTokenService refreshTokenService;
     AuthenticationManager authenticationManager;
-    UserCollectionRepo userCollectionRepo;
+
     JwtUtils jwtUtils;
     UserService userService;
     @Autowired
-    public AuthenticationService(RefreshTokenService refreshTokenService, AuthenticationManager authenticationManager, UserCollectionRepo userCollectionRepo, UserService userService, JwtUtils jwtUtils) {
+    public AuthenticationService(RefreshTokenService refreshTokenService, AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils) {
         this.refreshTokenService = refreshTokenService;
         this.authenticationManager = authenticationManager;
-        this.userCollectionRepo = userCollectionRepo;
         this.jwtUtils = jwtUtils;
         this.userService = userService;
     }
