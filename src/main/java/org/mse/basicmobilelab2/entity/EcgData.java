@@ -14,10 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 public class EcgData {
     @Id
-    private Long id;
+    private String id;
     @DBRef
     private User user;
     private Instant dateTime;
-    @DBRef
+
     private List<Long> ecgData;
+    private Long bpm;
 }

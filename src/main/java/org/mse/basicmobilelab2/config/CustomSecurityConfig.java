@@ -75,7 +75,7 @@ public class CustomSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/api/auth/**","/api/test/**", "/v3/api-docs", "/swagger-ui/**", "/swagger-resource/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/history/**").hasRole("USER"));
 
         http.authenticationProvider(authenticationProvider());
 
