@@ -4,6 +4,7 @@ package org.mse.basicmobilelab2.config;
 import lombok.extern.log4j.Log4j2;
 import org.mse.basicmobilelab2.security.jwt.AuthEntryPointJwt;
 import org.mse.basicmobilelab2.security.jwt.AuthTokenFilter;
+import org.mse.basicmobilelab2.security.jwt.ExceptionHandlingFilter;
 import org.mse.basicmobilelab2.security.jwt.JwtUtils;
 import org.mse.basicmobilelab2.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,8 @@ public class CustomSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    @Bean
+    public ExceptionHandlingFilter handlingFilter() {return new ExceptionHandlingFilter();}
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -78,7 +80,7 @@ public class CustomSecurityConfig {
                         .requestMatchers("/api/history/**").hasRole("USER"));
 
         http.authenticationProvider(authenticationProvider());
-
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
