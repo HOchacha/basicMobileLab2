@@ -12,4 +12,5 @@ public interface RefreshTokenRepo extends MongoRepository<RefreshToken, String> 
     Optional<RefreshToken> findByToken(String token);
 
     long deleteByUser(User user);
+
 }

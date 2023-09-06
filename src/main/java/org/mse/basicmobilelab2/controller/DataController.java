@@ -20,7 +20,6 @@ import javax.xml.crypto.Data;
 @RestController
 @RequestMapping("/api/history")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@OpenAPIDefinition(info = @Info(title = "Authentication Test", description = "", version = "v1"))
 @Log4j2
 public class DataController {
     DataService dataService;
@@ -38,7 +37,7 @@ public class DataController {
         log.info(ecgDataEnrollRequest.getJwt());
         log.info(ecgDataEnrollRequest.getBpm());
         log.info(ecgDataEnrollRequest.getEcgData());
-        MessageResponse messageResponse = dataService.enrollData(ecgDataEnrollRequest);
-        return ResponseEntity.ok(messageResponse);
+        return dataService.enrollData(ecgDataEnrollRequest);
+
     }
 }

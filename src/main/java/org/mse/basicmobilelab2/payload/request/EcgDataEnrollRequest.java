@@ -14,6 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @Log4j2
 public class EcgDataEnrollRequest {
+    private Instant dateTime;
+    private String jwt;
+    private List<Long> ecgData;
+    private int bpm;
+
     public Instant getDateTime() {
         return dateTime;
     }
@@ -27,14 +32,7 @@ public class EcgDataEnrollRequest {
         return ecgData;
     }
 
-    public Long getBpm() {
+    public int getBpm() {
         return bpm;
     }
-
-    private Instant dateTime;
-    private String jwt;
-    private List<Long> ecgData;
-    private Long bpm;
-
-
 }

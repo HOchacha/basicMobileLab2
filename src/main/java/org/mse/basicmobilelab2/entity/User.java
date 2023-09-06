@@ -41,8 +41,6 @@ public class User {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    @Size(max = 20)
-    private String physicalCondition;
 
     public User(){
     }
@@ -54,5 +52,4 @@ public class User {
         this.email = email;
         this.schoolName = schoolName;
     }
-
 }

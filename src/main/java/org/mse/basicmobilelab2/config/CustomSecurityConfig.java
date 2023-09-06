@@ -69,6 +69,11 @@ public class CustomSecurityConfig {
     }
     @Bean
     public ExceptionHandlingFilter handlingFilter() {return new ExceptionHandlingFilter();}
+
+    @Bean
+    public ExceptionHandlingFilter exceptionHandlingFilter(){
+        return new ExceptionHandlingFilter();
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -76,11 +81,11 @@ public class CustomSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/auth/**","/api/test/**", "/v3/api-docs", "/swagger-ui/**", "/swagger-resource/**").permitAll()
-                        .requestMatchers("/api/history/**").hasRole("USER"));
+                        .requestMatchers("/", "/api/auth/**","/api/test/**", "/api-docs", "/v3/api-docs", "/swagger-ui/**", "/swagger-resource/**").permitAll()
+                        .requestMatchers("/**").authenticated());
 
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionHandlingFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

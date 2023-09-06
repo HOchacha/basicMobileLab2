@@ -23,7 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Locale;
 
-@Component
+
 public class ExceptionHandlingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,10 +37,12 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
             setErrorResponse(response, e);
         } catch (IllegalArgumentException e) {
             setErrorResponse(response, e);
+        } catch(Exception e){
+            setErrorResponse(response, e);
         }
     }
     private void setErrorResponse(HttpServletResponse response, Throwable ex){
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         ErrorResponse errorResponse = new ErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
@@ -48,7 +50,7 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
             String responseJson = convertObjectToJson(errorResponse);
             response.getWriter().write(responseJson);
         }catch(IOException e) {
-            e.printStackTrace();
+
         }
     }
     public String convertObjectToJson(Object obj) {

@@ -18,7 +18,7 @@ public class EcgData {
     @DBRef
     private User user;
     private Instant dateTime;
-
     private List<Long> ecgData;
-    private Long bpm;
+    private int bpm;
+    private String bodyStat;
 }
