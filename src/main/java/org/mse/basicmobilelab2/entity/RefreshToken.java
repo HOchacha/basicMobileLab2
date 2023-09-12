@@ -1,26 +1,28 @@
 package org.mse.basicmobilelab2.entity;
 
-import jakarta.persistence.Id;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
-@Document(collection = "refreshtokens")
-@Data
+@Entity
+@Setter
+@Getter
+@Schema(description = "JWT 재발급 수단")
 public class RefreshToken {
-
     @Id
-    private String id;  // MongoDB에서는 주로 String 타입의 ID를 사용합니다.
-
-    @DBRef
-    private User user;
-
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(length = 50)
     private String token;
+    @Column
+    private LocalDateTime expiryDate;
 
-    private Instant expiryDate;
-
-    //getters and setters
-
+    @OneToOne(mappedBy = "refreshToken")
+    private User user;
 }

@@ -1,21 +1,23 @@
 package org.mse.basicmobilelab2.controller;
 
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
+
 import org.mse.basicmobilelab2.entity.RefreshToken;
 import org.mse.basicmobilelab2.entity.User;
+
 import org.mse.basicmobilelab2.exception.TokenRefreshException;
 import org.mse.basicmobilelab2.exception.UserEmailDuplicationException;
 import org.mse.basicmobilelab2.exception.UsernameDuplicatedException;
 import org.mse.basicmobilelab2.payload.request.LoginRequest;
 import org.mse.basicmobilelab2.payload.request.SignupRequest;
+
 import org.mse.basicmobilelab2.payload.request.TokenRefreshRequest;
 import org.mse.basicmobilelab2.payload.response.JwtResponse;
 import org.mse.basicmobilelab2.payload.response.MessageResponse;
+
 import org.mse.basicmobilelab2.payload.response.TokenRefreshResponse;
 import org.mse.basicmobilelab2.security.jwt.JwtUtils;
 import org.mse.basicmobilelab2.security.service.RefreshTokenService;
@@ -23,10 +25,11 @@ import org.mse.basicmobilelab2.service.AuthenticationService;
 import org.mse.basicmobilelab2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+
 
 @Log4j2
 @RestController
@@ -74,6 +77,7 @@ public class AuthController {
         return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
         //jwtUtils를 어떻게 빼야할지 고민, refreshTokenService 쪽으로 빼고 싶지만, map 함수의 구조가 이해되지 않음
     }
+
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

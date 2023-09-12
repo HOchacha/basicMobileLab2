@@ -1,15 +1,9 @@
 package org.mse.basicmobilelab2.service;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.coyote.Response;
 import org.mse.basicmobilelab2.entity.*;
-import org.mse.basicmobilelab2.exception.NoJwtException;
 import org.mse.basicmobilelab2.payload.request.EcgDataEnrollRequest;
 import org.mse.basicmobilelab2.payload.response.MessageResponse;
-import org.mse.basicmobilelab2.repository.BioDataRepository;
 import org.mse.basicmobilelab2.repository.EcgDataRepo;
 import org.mse.basicmobilelab2.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -30,14 +20,14 @@ public class DataService {
     EcgDataRepo ecgDataRepo;
     JwtUtils jwtUtils;
     UserService userService;
-    BioDataRepository bioDataRepository;
     @Autowired
-    public DataService(EcgDataRepo ecgDataRepo, JwtUtils jwtUtils, UserService userService, BioDataRepository bioDataRepository){
+    public DataService(EcgDataRepo ecgDataRepo, JwtUtils jwtUtils, UserService userService){
         this.userService = userService;
         this.ecgDataRepo = ecgDataRepo;
         this.jwtUtils = jwtUtils;
-        this.bioDataRepository = bioDataRepository;
+
     }
+
     public ResponseEntity<?> enrollData(EcgDataEnrollRequest ecgDataEnrollRequest){
 
         String initJwt = ecgDataEnrollRequest.getJwt();
@@ -47,7 +37,7 @@ public class DataService {
             try {
                 User user = userService.findUserByUsername(jwtUtils.getUserNameFromJwtToken(jwt));
                 log.info(user);
-                EcgData ecgData = new EcgData(null, user, ecgDataEnrollRequest.getDateTime(), ecgDataEnrollRequest.getEcgData(),ecgDataEnrollRequest.getBpm(), setBiologicalStatus(user, ecgDataEnrollRequest.getBpm()));
+                EcgData ecgData = new EcgData( user, ecgDataEnrollRequest.getDateTime(), toJSON(ecgDataEnrollRequest.getEcgData()),ecgDataEnrollRequest.getBpm(), "good");
                 log.info(ecgData);
                 ecgDataRepo.save(ecgData);
             }  catch (Exception e) {
@@ -56,26 +46,11 @@ public class DataService {
         }
         return new ResponseEntity(HttpStatus.OK);
     }
+    private Map<String, List<Long>> toJSON(List<Long> jsonList){
+        Map<String, List<Long>> data = new HashMap<>();
+        data.put("ecgdata", jsonList);
 
-    public String setBiologicalStatus(User user, int bpm){
-        Optional<BiologicalData> bioData = bioDataRepository.findByUser(user);
-        if(bioData.isPresent()) {
-            BiologicalData biologicalData = bioData.get();
-            ArrayList<Integer> list = getThreshold(biologicalData.getHRrest(),biologicalData.getHRmax(),biologicalData.getHRavailable());
-            if(bpm < list.get(0)) {
-                return "REST";
-            }
-            else if(bpm < list.get(1)) {
-                return "FAT BURNING";
-            }
-            else if(bpm < list.get(2)) {
-                return "CARDIAC REINFORCE";
-            }
-            else {
-                return "MAX";
-            }
-        }
-        return null;
+        return data;
     }
     private ArrayList<Integer> getThreshold(int HRrest, int HRmax, int HRavailable){
         ArrayList<Integer> list = new ArrayList<Integer>();

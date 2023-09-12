@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,11 +36,15 @@ public class RefreshTokenService {
         log.info(token);
         return refreshTokenRepo.findByToken(token);
     }
-    public RefreshToken createRefreshToken(String userId) {
+
+    public RefreshToken createRefreshToken() {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(userCollectionRepo.findById(userId).get());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+
+        Instant time = Instant.now().plusMillis(refreshTokenDurationMs);
+        LocalDateTime localDateTime = time.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        refreshToken.setExpiryDate(localDateTime);
         refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepo.save(refreshToken);
@@ -46,7 +52,7 @@ public class RefreshTokenService {
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+        if (token.getExpiryDate().atZone(ZoneId.systemDefault()).toInstant().compareTo(Instant.now()) < 0) {
             refreshTokenRepo.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
@@ -54,10 +60,8 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public int deleteByUserId(String userId) {
-        User user = userCollectionRepo.findById(userId).get();
-        //deleteByUser -> User 객체 필요
-        return (int)refreshTokenRepo.deleteByUser(user);
+    public void deleteRefreshToken(RefreshToken refreshToken) {
+        refreshTokenRepo.delete(refreshToken);
     }
 
 
