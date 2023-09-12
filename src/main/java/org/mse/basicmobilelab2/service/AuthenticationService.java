@@ -45,16 +45,15 @@ public class AuthenticationService {
         String Jwt = jwtUtils.generateJwtToken(authentication);
         //해당 코드의 존재 이유?
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userService.findUserByUsername(loginRequest.getUsername());
-        if(user.getRefreshToken() != null){
-            user.setRefreshToken(null);
-            userCollectionRepo.save(user);
-            refreshTokenService.deleteRefreshToken(user.getRefreshToken());
-
-        }
         RefreshToken refreshToken = refreshTokenService.createRefreshToken();
-        user.setRefreshToken(refreshToken);
-        userCollectionRepo.save(user);
+        User user = userService.findUserByUsername(loginRequest.getUsername());
+
+        if(user.getRefreshToken() != null){
+            RefreshToken oldToken = user.getRefreshToken();
+            user.setRefreshToken(refreshToken);
+            userCollectionRepo.save(user);
+            refreshTokenService.deleteRefreshToken(oldToken);
+        }
         return new JwtResponse(Jwt, refreshToken.getToken(), user.getUsername(), user.getEmail());
     }
 }
