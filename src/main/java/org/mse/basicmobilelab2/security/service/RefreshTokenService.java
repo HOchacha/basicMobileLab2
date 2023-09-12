@@ -24,6 +24,7 @@ public class RefreshTokenService {
     @Value("${refreshTokenExpirationMs}")
     private Long refreshTokenDurationMs;
 
+
     @Autowired
     public RefreshTokenService(RefreshTokenRepo refreshTokenRepo, UserCollectionRepo userCollectionRepo) {
         this.refreshTokenRepo = refreshTokenRepo;
@@ -52,7 +53,9 @@ public class RefreshTokenService {
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
+        User user = userCollectionRepo.findByRefreshToken(token).get();
         if (token.getExpiryDate().atZone(ZoneId.systemDefault()).toInstant().compareTo(Instant.now()) < 0) {
+            user.setRefreshToken(null);
             refreshTokenRepo.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
