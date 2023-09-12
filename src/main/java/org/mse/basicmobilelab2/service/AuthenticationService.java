@@ -47,6 +47,8 @@ public class AuthenticationService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userService.findUserByUsername(loginRequest.getUsername());
         if(user.getRefreshToken() != null){
+            user.setRefreshToken(null);
+            userCollectionRepo.save(user);
             refreshTokenService.deleteRefreshToken(user.getRefreshToken());
 
         }
