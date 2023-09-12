@@ -1,55 +1,74 @@
 package org.mse.basicmobilelab2.entity;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-@Document(collection = "users")
-@Data
+
+@Entity
+@Table(name = "user")
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "회원 정보")
 public class User {
-    @Id
-    private String id;
-
-    @NotBlank
-    @Size(max = 20)
-    private String username;
-
-    @NotBlank
-    @Size(max = 120)
-    private String password;
-
-    @NotBlank
-    @Size(max = 30)
-    private String name;
-
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    private String email;
-
-    @NotBlank
-    @Size(max = 40)
-    private String schoolName;
-
-    @DBRef
-    private Set<Role> roles = new HashSet<>();
-
-
-    public User(){
-    }
-
-    public User(String username, String password, String name, String email, String schoolName) {
+    public User(String username, String password, String email, String name, String gender, String exerciseStat, int age){
         this.username = username;
         this.password = password;
-        this.name = name;
         this.email = email;
-        this.schoolName = schoolName;
+        this.name = name;
+        this.gender = gender;
+        this.excerciseStat = exerciseStat;
+        this.age = age;
     }
+
+    @Id
+    @Column(length = 50, nullable = false)
+    private String username;
+
+    @Column(length = 100)
+    private String password;
+
+    @Column(length = 40)
+    private String name;
+
+    @Column(length = 40)
+    private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles = new ArrayList<>();
+
+    @Column
+    private Integer age;
+
+    @Column(length = 1)
+    @NotNull
+    private String gender;
+    //use abbreviation, male for M either female for F
+
+    @Column
+    private String excerciseStat;
+
+    @Column
+    private Integer HRrest;
+
+    @Column
+    private Integer HRmax;
+
+    @Column
+    private Integer HRavailable;
+
+    @JoinColumn(name="refreshToken_id")
+    @OneToOne
+    private RefreshToken refreshToken;
 }

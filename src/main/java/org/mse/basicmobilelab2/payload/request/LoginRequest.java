@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema
-public class LoginRequest extends io.swagger.v3.oas.models.media.Schema {
+public class LoginRequest {
     private String username;
     private String password;
 }

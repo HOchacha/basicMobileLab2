@@ -38,6 +38,6 @@ public class DataController {
         log.info(ecgDataEnrollRequest.getBpm());
         log.info(ecgDataEnrollRequest.getEcgData());
         return dataService.enrollData(ecgDataEnrollRequest);
-
     }
+
 }

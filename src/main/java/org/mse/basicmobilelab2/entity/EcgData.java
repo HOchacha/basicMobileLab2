@@ -1,24 +1,56 @@
 package org.mse.basicmobilelab2.entity;
 
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Type;
+
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
-@Document(collection = "ecgdata")
-@Data
+@Entity
+@Table(name = "ecgData")
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "1회 측정한 ecgData 정보")
 public class EcgData {
-    @Id
-    private String id;
-    @DBRef
+    @Id()
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_username")
     private User user;
-    private Instant dateTime;
-    private List<Long> ecgData;
+
+    @Column
+    private LocalDateTime dateTime;
+
+    @Column(columnDefinition = "longtext")
+    @Type(JsonType.class)
+    private Map<String, List<Long>> ecgData;
+
+    @Column
     private int bpm;
+
+    @Column(length = 30)
     private String bodyStat;
+    public EcgData(User user, LocalDateTime localDateTime, Map<String, List<Long>> ecgData, int bpm, String bodyStat){
+        this.user = user;
+        this.bodyStat =bodyStat;
+        this.user = user;
+        this.dateTime = localDateTime;
+        this.ecgData = ecgData;
+        this.bpm = bpm;
+        this.bodyStat = bodyStat;
+    }
+
+
 }
