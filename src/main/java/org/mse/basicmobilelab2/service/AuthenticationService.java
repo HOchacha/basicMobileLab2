@@ -54,6 +54,10 @@ public class AuthenticationService {
             userCollectionRepo.save(user);
             refreshTokenService.deleteRefreshToken(oldToken);
         }
+        else {
+            user.setRefreshToken(refreshToken);
+            userCollectionRepo.save(user);
+        }
         return new JwtResponse(Jwt, refreshToken.getToken(), user.getUsername(), user.getEmail());
     }
 }
