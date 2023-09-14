@@ -1,5 +1,6 @@
 package org.mse.basicmobilelab2.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class EcgData {
     private Integer id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_username")
     private User user;
 

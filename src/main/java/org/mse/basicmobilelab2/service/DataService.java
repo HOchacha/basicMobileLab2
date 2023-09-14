@@ -2,6 +2,7 @@ package org.mse.basicmobilelab2.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.mse.basicmobilelab2.entity.*;
+import org.mse.basicmobilelab2.exception.NoInstanceException;
 import org.mse.basicmobilelab2.payload.request.EcgDataEnrollRequest;
 import org.mse.basicmobilelab2.payload.response.MessageResponse;
 import org.mse.basicmobilelab2.repository.EcgDataRepo;
@@ -52,11 +53,22 @@ public class DataService {
 
         return data;
     }
-    private ArrayList<Integer> getThreshold(int HRrest, int HRmax, int HRavailable){
+    private ArrayList<Integer> getThreshold(int HRrest, int HRavailable){
         ArrayList<Integer> list = new ArrayList<Integer>();
         list.add((int)0.4*HRavailable + HRrest);
         list.add((int)0.6*HRavailable + HRrest);
         list.add((int)0.85*HRavailable + HRrest);
         return list;
+    }
+
+    public List<EcgData> getECGhistory(String initJwt) {
+
+        if(initJwt != null && initJwt.startsWith("Bearer ")) {
+            String jwt = initJwt.substring(7, initJwt.length());
+            User user = userService.findUserByUsername(jwtUtils.getUserNameFromJwtToken(jwt));
+            return ecgDataRepo.findByUser(user);
+        } else {
+            throw new NoInstanceException("No Data");
+        }
     }
 }
